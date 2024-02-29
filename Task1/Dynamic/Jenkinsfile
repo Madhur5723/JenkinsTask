@@ -1,0 +1,39 @@
+pipeline {
+    agent any
+
+    parameters {
+        string(name: 'BRANCH_CHOICE', defaultValue: 'master', description: 'Enter the branch name')
+    }
+
+    stages {
+        stage("Clean Up") {
+            steps {
+                deleteDir()
+            }
+        }
+        stage("Clone Repo") {
+            steps {
+                script {
+                    // Clone the repository
+                    sh "git clone https://github.com/Madhur5723/JenkinsTask.git"
+                }
+            }
+        }
+        stage("Print File Content") {
+            steps {
+                script {
+                    // Get the selected branch choice
+                    def branchChoice = params.BRANCH_CHOICE
+                    // Define the file name based on the selected branch
+                    def fileName = "${branchChoice}.txt"
+
+                    // Check out the selected branch
+                    sh "cd JenkinsTask && git checkout ${branchChoice}"
+
+                    sh "ls -la JenkinsTask" // Print directory contents for debugging
+                    sh "cat JenkinsTask/${fileName}"
+                }
+            }
+        }
+    }
+}
